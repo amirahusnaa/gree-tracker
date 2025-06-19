@@ -117,7 +117,7 @@
       const completed = Array.from(tasks).map(task => task.checked ? 'Yes' : 'No');
       const formData = { name, completed };
 
-      fetch("https://script.google.com/macros/s/AKfycbzT4Skp15mbRK2et3hJIwyPKBT7gLWNPDYTfCmzLmUa8UDPfJuA-107W4CYhTxinHcG/exec", {
+      fetch("https://script.google.com/macros/s/AKfycbzt4Skp15mbRK2et3hJIwyPKBT7gLWNPDYTfCmzLmUa8UDpfJuA-107W4CYhTxinHcG/exec", {
         method: "POST",
         body: JSON.stringify(formData),
         headers: { "Content-Type": "application/json" }
