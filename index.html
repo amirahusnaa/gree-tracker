@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IGEM 2025 Green Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #e9f5ec;
+      color: #2b593e;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 400px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    h1, h2 {
+      text-align: center;
+      color: #2b593e;
+    }
+    label, input[type="checkbox"] {
+      display: block;
+      margin: 10px 0;
+    }
+    .progress {
+      background-color: #c6e9cd;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 20px 0;
+    }
+    .progress-bar {
+      height: 20px;
+      background-color: #4caf50;
+      width: 0%;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #2b593e;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .leaderboard {
+      margin-top: 30px;
+      background-color: #f2fff5;
+      padding: 10px;
+      border-radius: 8px;
+    }
+    .leaderboard-entry {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Green Footprint Tracker</h1>
+    <label>Name: <input type="text" id="name"></label>
+    <label><input type="checkbox" class="task"> Day 1 - BYO Bottle</label>
+    <label><input type="checkbox" class="task"> Day 2 - Public Transport</label>
+    <label><input type="checkbox" class="task"> Day 3 - No Plastic Bags</label>
+    <label><input type="checkbox" class="task"> Day 4 - Vegetarian Meal</label>
+    <label><input type="checkbox" class="task"> Day 5 - No AC Day</label>
+    <label><input type="checkbox" class="task"> Day 6 - E-Waste Sort</label>
+    <label><input type="checkbox" class="task"> Day 7 - Teach One Person</label>
+    <div class="progress">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+    <button onclick="submitForm()">Submit</button>
+
+    <div class="leaderboard">
+      <h2>Leaderboard</h2>
+      <div id="leaderboard-entries"></div>
+    </div>
+  </div>
+
+  <script>
+    const tasks = document.querySelectorAll('.task');
+    const progressBar = document.getElementById('progress-bar');
+    const leaderboard = document.getElementById('leaderboard-entries');
+
+    tasks.forEach(task => {
+      task.addEventListener('change', updateProgress);
+    });
+
+    function updateProgress() {
+      const completed = document.querySelectorAll('.task:checked').length;
+      const total = tasks.length;
+      const percent = (completed / total) * 100;
+      progressBar.style.width = percent + '%';
+    }
+
+    const dummyLeaderboard = [
+      { name: "Aina", score: 7 },
+      { name: "Ravi", score: 6 },
+      { name: "Siti", score: 5 }
+    ];
+
+    function renderLeaderboard() {
+      leaderboard.innerHTML = dummyLeaderboard.map(entry => `
+        <div class="leaderboard-entry">
+          <strong>${entry.name}</strong>: ${entry.score}/7 days
+        </div>
+      `).join('');
+    }
+
+    function submitForm() {
+      const name = document.getElementById('name').value;
+      const completed = Array.from(tasks).map(task => task.checked ? 'Yes' : 'No');
+      const formData = { name, completed };
+
+      fetch("https://script.google.com/macros/s/AKfycbzT4Skp15mbRK2et3hJIwyPKBT7gLWNPDYTfCmzLmUa8UDPfJuA-107W4CYhTxinHcG/exec", {
+        method: "POST",
+        body: JSON.stringify(formData),
+        headers: { "Content-Type": "application/json" }
+      })
+      .then(response => {
+        alert("Success! Your green actions are tracked.");
+        console.log("Submitted:", formData);
+        dummyLeaderboard.push({ name, score: completed.filter(val => val === 'Yes').length });
+        dummyLeaderboard.sort((a, b) => b.score - a.score);
+        renderLeaderboard();
+      })
+      .catch(error => alert("Submission failed: " + error));
+    }
+
+    renderLeaderboard();
+  </script>
+</body>
+</html>
